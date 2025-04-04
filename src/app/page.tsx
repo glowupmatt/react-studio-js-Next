@@ -26,18 +26,8 @@ const Editor = () => {
   const setUpChain = useRef<any>(null);
 
   const {
-    theme,
     setEventEmitter,
-    podcast,
-    showAnnotations,
-    setShowAnnotations,
-    enableAnnotations,
-    setEnableAnnotations,
-    dialogBox,
-    setDialogBox,
   } = useThemeSettings();
-
-  const { backgroundColor, textColor } = theme;
 
   // =============Types================>
   type TInitialState = {
@@ -157,7 +147,6 @@ const Editor = () => {
       class: 'fas.fa-trash',
       title: 'Delete annotation',
       action: (
-        annotation: TAnnotation,
         i: number,
         annotations: TAnnotation[]
       ) => {
@@ -166,9 +155,6 @@ const Editor = () => {
     },
   ];
 
-  // =============Annotations Actions================>
-
-  // =============>Init React-Studio<================>
   const container = useCallback(
     (node: HTMLDivElement | null) => {
       if (node !== null && toneCtx !== null) {
@@ -199,14 +185,7 @@ const Editor = () => {
                 remove: true,
               },
             },
-            annotationList: {
-              annotations: [],
-              controls: actions,
-              editable: false,
-              isContinuousPlay: false,
-              linkEndpoints: false,
-            },
-
+       
             zoomLevels: [500, 1000, 2000],
             seekStyle: 'fill',
           },
@@ -227,16 +206,10 @@ const Editor = () => {
           //restore original ctx for further use.
           Tone.setContext(toneCtx);
           if (type === 'wav') {
-            saveAs(data, `${podcast}.wav`);
+            //Change to input values
+            // saveAs(data, `${podcast}.wav`);
           }
-        });
-        // open Modal when adding a track or tracks on init
-        ee.on('audiosources_rendering', () => setDialogBox(true));
-        // close modal when all tracks are added
-        ee.on('audiosourcesrendered', () => {
-          setDialogBox(false);
-        });
-
+        })
         // display audio Bar
         ee.on('tracksUpdated', (e: any) =>
           dispatch({
@@ -273,14 +246,6 @@ const Editor = () => {
             payload,
           })
         );
-        ee.on('clearAnnotations', () => {
-          // Enable interaction Buttons
-          setEnableAnnotations(true);
-          // Display Annotations
-          setShowAnnotations(false);
-        });
-
-        // ===========================================
 
         playlist.initExporter();
         // set Event emitter to context api
@@ -319,41 +284,10 @@ const Editor = () => {
         return ee.emit('play');
       case 'pause':
         return ee.emit('pause');
-      case 'cursor':
-        return ee.emit('statechange', 'cursor');
-      case 'region':
-        return ee.emit('statechange', 'select');
-      case 'shift':
-        return ee.emit('statechange', 'shift');
-      case 'trim':
-        return ee.emit('trim');
-      case 'cut':
-        ee.emit('cut');
-        return dispatch({
-          type: ETypes.SETENABLECUT,
-          payload: true,
-        });
-      case 'split':
-        return ee.emit('split');
-      case 'fadein':
-        return ee.emit('statechange', 'fadein');
-      case 'fadeout':
-        return ee.emit('statechange', 'fadeout');
-      case 'zoomin':
-        return ee.emit('zoomin');
-      case 'zoomout':
-        return ee.emit('zoomout');
       case 'upload':
         if (uploadRef.current) return uploadRef.current.click();
       case 'download':
         return ee.emit('startaudiorendering', 'wav');
-      case 'addAnnotation':
-        if (uploadAnnRef.current) return uploadAnnRef.current.click();
-      case 'downloadAnnotation':
-        return ee.emit('annotationsrequest');
-      case 'clearAnnotations':
-        return ee.emit('clearAnnotations');
-
       default:
         break;
     }
@@ -376,10 +310,6 @@ const Editor = () => {
         const jsonData = JSON.parse(fileContents);
 
         ee.emit('addAnnotation', jsonData);
-
-        setShowAnnotations(true);
-
-        setEnableAnnotations(false);
         if (uploadAnnRef.current) uploadAnnRef.current.value = '';
       } catch (err) {
         console.log(err);
@@ -392,24 +322,13 @@ const Editor = () => {
     <Box
       sx={{
         p: 2,
-        backgroundColor,
-        color: textColor,
         paddingTop: 10,
         overflowY: 'auto',
         overflowX: 'hidden',
       }}
     >
       <NavBar />
-      <DialogBox open={dialogBox} />
-
       <Box>
-        <EditorButtons
-          handleClick={handleClick}
-          cutButton={enableCut}
-          disabled={allbuttons}
-          splitButton={enableSplit}
-          enableAnnotations={enableAnnotations}
-        />
 
         {/* Editor and upload button */}
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -469,18 +388,6 @@ const Editor = () => {
                   left: '45%',
                   translate: '-50%',
                   transform: 'rotate(-45deg)',
-                },
-              },
-              '.annotations': {
-                height: showAnnotations ? 215 : 0,
-                overflow: 'hidden',
-                transition: '0.35s',
-                '.current': {
-                  transition: '0.65s',
-                },
-                span: {
-                  color: dark,
-                  fontWeight: 'bold',
                 },
               },
             }}

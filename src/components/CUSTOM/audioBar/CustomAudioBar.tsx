@@ -4,9 +4,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useThemeSettings } from '../../../hooks';
 import { secondsToHMS } from '@/utils/timeformatter';
 const CustomTimeLine = ({ bottom, ee }: { bottom: number; ee: any }) => {
-  const { theme, keyPress } = useThemeSettings();
+  const {  keyPress } = useThemeSettings();
   const { key, shiftKey, code } = keyPress;
-  const { textColor } = theme;
+
   // total duration of the track
   const [duration, setDuration] = useState('00:00:00');
 
@@ -109,9 +109,9 @@ const CustomTimeLine = ({ bottom, ee }: { bottom: number; ee: any }) => {
             }}
           >
             {isPlaying ? (
-              <PlayArrow fontSize={'large'} sx={{ color: textColor }} />
+              <PlayArrow fontSize={'large'} sx={{ color: "dark" }} />
             ) : (
-              <Pause fontSize={'large'} sx={{ color: textColor }} />
+              <Pause fontSize={'large'} sx={{ color: "dark" }} />
             )}
           </IconButton>
         </Tooltip>

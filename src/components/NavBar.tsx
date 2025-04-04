@@ -27,14 +27,10 @@ export default function NavBAr() {
   };
 
   const {
-    theme: { mode, textColor },
-    changeTitle,
-    podcast,
+
     event_Emitter,
-    setShowAnnotations,
-    setEnableAnnotations,
-    setAnnotations,
-    setDialogBox,
+
+
   } = useThemeSettings();
 
   const [loading, setLoading] = React.useState(false);
@@ -43,7 +39,6 @@ export default function NavBAr() {
     setLoading(() => true);
     event_Emitter.emit('clear');
     event_Emitter.emit('clearAnnotations');
-    setDialogBox(true);
     try {
       const track =
         'https://raw.githubusercontent.com/TareqFl/samples_data/main/Podcast.wav';
@@ -66,9 +61,7 @@ export default function NavBAr() {
       const anno_response = await fetch(annotation);
       const annotations: TAnnotation[] = await anno_response.json();
       event_Emitter.emit('addAnnotation', annotations);
-      setAnnotations(annotations);
-      setShowAnnotations(true);
-      setEnableAnnotations(false);
+  
       setLoading(() => false);
     } catch (err) {
       if (err instanceof Error) {
@@ -81,20 +74,7 @@ export default function NavBAr() {
   }
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar
-        position="fixed"
-        elevation={1}
-        sx={{
-          backgroundColor: mode === 'light' ? light : dark,
-          borderBottomRightRadius: 0,
-          borderBottomLeftRadius: 0,
-          svg: {
-            width: '20px',
-            height: '20px',
-          },
-        }}
-      >
-        <Toolbar>
+      
           <Stack
             flexDirection={'row'}
             alignItems={'center'}
@@ -109,9 +89,6 @@ export default function NavBAr() {
               ariaLabel="bars-loading"
               visible={true}
             />
-            <Typography color={mode === 'light' ? dark : light}>
-              React-Studio
-            </Typography>
           </Stack>
           <Stack
             flexGrow={1}
@@ -119,23 +96,6 @@ export default function NavBAr() {
             alignItems={'center'}
             justifyContent={'center'}
           >
-            <Tooltip title={'Click to edit'}>
-              <InputBase
-                sx={{
-                  color: mode === 'light' ? dark : light,
-                  fontWeight: 'bold',
-                }}
-                value={podcast}
-                onChange={(e) => {
-                  const {
-                    target: { value },
-                  } = e;
-
-                  changeTitle(value.slice(0, 19));
-                }}
-                multiline
-              />
-            </Tooltip>
           </Stack>
 
           {loading ? (
@@ -151,18 +111,6 @@ export default function NavBAr() {
           ) : (
             <Button onClick={showDemo}>Load Demo</Button>
           )}
-          <ModeSwitch />
-          <IconButton onClick={() => window.open('https://github.com/TareqFl')}>
-            <GitHub
-              fontSize="large"
-              sx={{
-                color: textColor,
-                ':hover': { scale: '1.5', transition: '.35s' },
-              }}
-            />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
     </Box>
   );
 }

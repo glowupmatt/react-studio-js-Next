@@ -45,13 +45,13 @@ type TArgs =  {
         remove: true | false,
       },
     },
-    annotationList: null | {
-      annotations: [],
-      controls: Controls,
-      editable: true | false,
-      isContinuousPlay: true | false,
-      linkEndpoints: true | false,
-    },
+    // annotationList: null | {
+    //   annotations: [],
+    //   controls: Controls,
+    //   editable: true | false,
+    //   isContinuousPlay: true | false,
+    //   linkEndpoints: true | false,
+    // },
 
     zoomLevels: number[] | [500, 1000, 2000],
     seekStyle: 'fill' | 'line',
