@@ -38,13 +38,9 @@ export default function NavBAr() {
   async function showDemo() {
     setLoading(() => true);
     event_Emitter.emit('clear');
-    event_Emitter.emit('clearAnnotations');
     try {
       const track =
-        'https://raw.githubusercontent.com/TareqFl/samples_data/main/Podcast.wav';
-      const annotation =
-        'https://raw.githubusercontent.com/TareqFl/samples_data/main/annotations.json';
-
+        'https://rendered-stem-bucket.s3.us-west-2.amazonaws.com/originals/BAD_BUNNY_-_BAILE_INoLVIDABLE_Video_Oficial_DeBI_TiRAR_MaS_FOToS.mp3';
       const response = await fetch(track);
       const data = await response.blob();
 
@@ -58,10 +54,7 @@ export default function NavBAr() {
         id: uuidv4(),
         url: true,
       });
-      const anno_response = await fetch(annotation);
-      const annotations: TAnnotation[] = await anno_response.json();
-      event_Emitter.emit('addAnnotation', annotations);
-  
+
       setLoading(() => false);
     } catch (err) {
       if (err instanceof Error) {

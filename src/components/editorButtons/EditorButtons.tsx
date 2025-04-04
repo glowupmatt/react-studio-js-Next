@@ -23,7 +23,6 @@ type TProps = {
   cutButton: boolean;
   disabled: boolean;
   splitButton: boolean;
-  enableAnnotations: boolean;
 };
 
 const EditorButtons = ({
@@ -31,11 +30,7 @@ const EditorButtons = ({
   cutButton,
   disabled,
   splitButton,
-  enableAnnotations,
 }: TProps) => {
-  const {
-    theme: { mode },
-  } = useThemeSettings();
   const actionButtons = [
     {
       name: 'cursor',
@@ -93,18 +88,6 @@ const EditorButtons = ({
     // "LoadFromStorage",
     // "uploadToCloudStorage",
     {
-      name: 'addAnnotation',
-      icon: <Abc />,
-    },
-    {
-      name: 'downloadAnnotation',
-      icon: <FontDownload />,
-    },
-    {
-      name: 'clearAnnotations',
-      icon: <FontDownloadOff />,
-    },
-    {
       name: 'upload',
       icon: <FileUpload />,
     },
@@ -138,9 +121,6 @@ const EditorButtons = ({
           }
           toBeDisabled = splitButton;
         }
-        if (name === 'downloadAnnotation' || name === 'clearAnnotations') {
-          toBeDisabled = enableAnnotations;
-        }
         return (
           <Tooltip title={name} key={index}>
             <span>
@@ -156,14 +136,13 @@ const EditorButtons = ({
                   ':hover': {
                     transform: 'scale(1.2)',
                     outline: `1px solid ${
-                      mode === 'light' ? '#0088d1' : '#9c27b0'
+                      '#0088d1' 
                     }`,
                   },
 
                   transition: '0.25s',
                 }}
               >
-                {icon}
               </Button>
             </span>
           </Tooltip>

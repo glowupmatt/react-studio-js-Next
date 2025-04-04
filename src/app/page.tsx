@@ -96,64 +96,8 @@ const Editor = () => {
     uploadRef,
     uploadAnnRef,
     allbuttons,
-    enableCut,
-    enableSplit,
   } = state;
 
-  // =============Annotations Actions================>
-  const actions = [
-    {
-      class: 'fas.fa-play',
-      title: 'Play Annotation',
-      action: (annotation: TAnnotation) => {
-        if (!ee) return;
-        ee.emit('play', annotation.start, annotation.end);
-      },
-    },
-    {
-      class: 'fas.fa-plus',
-      title: 'Insert New Annotation',
-      action: (
-        annotation: TAnnotation,
-        i: number,
-        annotations: TAnnotation[],
-        opts: {
-          linkEndpoints: true | false;
-        }
-      ) => {
-        if (i === annotations.length - 1) {
-          return console.log('not possible');
-        }
-
-        let newIndex = i + 1;
-        const newAnnotation = {
-          id: String(newIndex),
-          start: annotation.end,
-          end: annotations[i + 1].start,
-          lines: ['New Draft'],
-          lang: 'en',
-        };
-
-        annotations.forEach((ann, indx) => {
-          if (indx >= newIndex) {
-            return (ann.id = String(indx + 1));
-          }
-        });
-        annotations.splice(i + 1, 0, newAnnotation);
-      },
-    },
-
-    {
-      class: 'fas.fa-trash',
-      title: 'Delete annotation',
-      action: (
-        i: number,
-        annotations: TAnnotation[]
-      ) => {
-        annotations.splice(i, 1);
-      },
-    },
-  ];
 
   const container = useCallback(
     (node: HTMLDivElement | null) => {
@@ -179,10 +123,10 @@ const Editor = () => {
               width: 175,
               widgets: {
                 collapse: false,
-                muteOrSolo: true,
+                muteOrSolo: false,
                 volume: true,
-                stereoPan: true,
-                remove: true,
+                stereoPan: false,
+                remove: false,
               },
             },
        
@@ -274,49 +218,7 @@ const Editor = () => {
     if (uploadRef.current) uploadRef.current.value = '';
   }
 
-  function handleClick(event: { target: { name: string } }) {
-    const {
-      target: { name },
-    } = event;
-
-    switch (name) {
-      case 'play':
-        return ee.emit('play');
-      case 'pause':
-        return ee.emit('pause');
-      case 'upload':
-        if (uploadRef.current) return uploadRef.current.click();
-      case 'download':
-        return ee.emit('startaudiorendering', 'wav');
-      default:
-        break;
-    }
-  }
-
   // upload Annotation
-  function handleAnnUpload(event: ChangeEvent<HTMLInputElement>) {
-    if (!event.target.files) return;
-    const file = event.target.files[0];
-    if (!file) {
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = async (e: ProgressEvent<FileReader>) => {
-      try {
-        if (!e.target?.result) return;
-        const fileContents = e.target.result as string;
-
-        const jsonData = JSON.parse(fileContents);
-
-        ee.emit('addAnnotation', jsonData);
-        if (uploadAnnRef.current) uploadAnnRef.current.value = '';
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    reader.readAsText(file);
-  }
 
   return (
     <Box
@@ -338,15 +240,6 @@ const Editor = () => {
             accept=".mp3, .wav"
             multiple={false}
             onChange={handleUpload}
-            style={{
-              display: 'none',
-            }}
-          />
-          <input
-            ref={uploadAnnRef}
-            type="file"
-            accept=".json"
-            onChange={handleAnnUpload}
             style={{
               display: 'none',
             }}
